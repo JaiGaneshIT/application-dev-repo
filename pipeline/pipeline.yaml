@@ -1,0 +1,82 @@
+apiVersion: tekton.dev/v1
+kind: Pipeline
+metadata:
+  name: hello-world-pipeline
+spec:
+  params:
+    - name: GIT_REPO
+      type: string
+      description: "Git repository URL"
+    - name: GIT_REVISION
+      type: string
+      description: "Git branch or commit revision"
+      default: "main"
+    - name: IMAGE
+      type: string
+      description: "Target image location in OpenShift Internal Registry"
+  workspaces:
+    - name: shared-workspace
+  tasks:
+    # Task 1: Clone Git Repo
+    - name: fetch-repository
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: git-clone
+          - name: namespace
+            value: openshift-pipelines
+      workspaces:
+        - name: output
+          workspace: shared-workspace
+      params:
+        - name: url
+          value: $(params.GIT_REPO)
+        - name: revision
+          value: $(params.GIT_REVISION)
+
+    # Task 2: Build & Push Container Image using Buildah
+    - name: build-image
+      runAfter:
+        - fetch-repository
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: buildah
+          - name: namespace
+            value: openshift-pipelines
+      workspaces:
+        - name: source
+          workspace: shared-workspace
+      params:
+        - name: IMAGE
+          value: $(params.IMAGE)
+        - name: TLSVERIFY
+          value: "false"
+
+    # Task 3: Deploy to OpenShift
+    - name: deploy-app
+      runAfter:
+        - build-image
+      taskRef:
+        resolver: cluster
+        params:
+          - name: kind
+            value: task
+          - name: name
+            value: openshift-client
+          - name: namespace
+            value: openshift-pipelines
+      workspaces:
+        - name: manifest-dir
+          workspace: shared-workspace
+      params:
+        - name: SCRIPT
+          value: |
+            oc apply -f k8s/
+            oc rollout status deployment/hello-world-app
