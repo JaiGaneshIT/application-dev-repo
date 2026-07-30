@@ -7,7 +7,7 @@ spec:
     name: hello-world-pipeline
   params:
     - name: GIT_REPO
-      value: "https://github.com/<your-username>/application-dev-repo.git"
+      value: "https://github.com/devsecops-ci/application-dev-repo.git"
     - name: GIT_REVISION
       value: "main"
     - name: IMAGE
