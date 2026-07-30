@@ -1,0 +1,23 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: hello-world-run-
+spec:
+  pipelineRef:
+    name: hello-world-pipeline
+  params:
+    - name: GIT_REPO
+      value: "https://github.com/<your-username>/application-dev-repo.git"
+    - name: GIT_REVISION
+      value: "main"
+    - name: IMAGE
+      value: "image-registry.openshift-image-registry.svc:5000/<your-namespace>/hello-world-app:latest"
+  workspaces:
+    - name: shared-workspace
+      volumeClaimTemplate:
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
