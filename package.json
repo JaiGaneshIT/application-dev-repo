@@ -1,0 +1,9 @@
+{
+  "name": "hello-world-openshift",
+  "version": "1.0.0",
+  "description": "Hello World App for OpenShift Pipelines",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  }
+}
