@@ -11,7 +11,7 @@ spec:
     - name: GIT_REVISION
       value: "main"
     - name: IMAGE
-      value: "image-registry.openshift-image-registry.svc:5000/<your-namespace>/hello-world-app:latest"
+      value: "image-registry.openshift-image-registry.svc:5000/devsecops-ci/hello-world-app:latest"
   workspaces:
     - name: shared-workspace
       volumeClaimTemplate:
