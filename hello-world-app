@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello DevSecOps</title>
+</head>
+<body>
+    <h1>Hello from OpenShift DevSecOps!</h1>
+    <p>Built by Tekton and deployed by Argo CD.</p>
+</body>
+</html>
